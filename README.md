@@ -46,6 +46,7 @@
 | 模式/情境 | 快捷鍵 / 操作 | 功能描述 |
 | :--- | :--- | :--- |
 | **通用** | `Middle Click` (按住) | 移動畫布 |
+| | `Alt` + `Left/Right Click` (按住) | 移動畫布 (觸控板適用) |
 | | `Scroll` | 縮放畫布 |
 | | `Ctrl` + `Z` | 撤銷 (Undo) |
 | | `Ctrl` + `Shift` + `Z` / `Ctrl` + `Y` | 復原 (Redo) |

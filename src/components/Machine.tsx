@@ -36,6 +36,7 @@ export const Machine: React.FC<MachineProps> = ({ data, isSelected }) => {
 
     // 處理材料選擇的點擊事件
     const handleClick = (e: React.MouseEvent) => {
+        if (useGameStore.getState().didPan) return; // 拖動畫布手勢結束時的 click 不觸發
         if (mode === GameMode.BUILD) {
             e.stopPropagation();
             openMaterialSelector(data.id);
@@ -44,7 +45,7 @@ export const Machine: React.FC<MachineProps> = ({ data, isSelected }) => {
 
     const handleMouseDown = (e: React.MouseEvent) => {
         // 僅允許在建造模式下拾取...
-        if (e.button !== 0) return; // 僅左鍵點擊
+        if (e.button !== 0 || e.altKey) return; // 僅左鍵點擊；Alt+左鍵用於拖動畫布
 
         pressTimer.current = setTimeout(() => {
             pickupMachine(data.id);
@@ -68,6 +69,7 @@ export const Machine: React.FC<MachineProps> = ({ data, isSelected }) => {
     // ... getPortStyle ...
 
     const handleInputClick = (e: React.MouseEvent) => {
+        if (useGameStore.getState().didPan) return; // 拖動畫布手勢結束時的 click 不觸發
         e.stopPropagation();
         if (mode === GameMode.WIRE && isWiring) {
             commitWiring();
@@ -158,6 +160,7 @@ export const Machine: React.FC<MachineProps> = ({ data, isSelected }) => {
     };
 
     const handleOutputClick = (e: React.MouseEvent, portIndex: number, portRel: { x: number, y: number }) => {
+        if (useGameStore.getState().didPan) return; // 拖動畫布手勢結束時的 click 不觸發
         e.stopPropagation();
         if (mode === GameMode.WIRE) {
             // 計算端口的絕對網格座標

@@ -29,6 +29,7 @@ interface GameState {
     // View State
     zoom: number;
     pan: Point;
+    didPan: boolean; // 本次滑鼠手勢是否為拖動畫布（用於抑制手勢結束時的 click/contextmenu 誤觸）
 
     // Grid State
     gridWidth: number;
@@ -145,6 +146,7 @@ export const useGameStore = create<GameState>((set, get) => ({
 
     zoom: 1,
     pan: { x: 0, y: 0 },
+    didPan: false,
     gridWidth: 24,
     gridHeight: 24,
 

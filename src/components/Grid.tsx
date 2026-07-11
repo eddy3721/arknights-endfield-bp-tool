@@ -111,8 +111,12 @@ export const Grid = () => {
     const hoverPosRef = useRef<Point | null>(null);
 
     const handleMouseDown = (e: React.MouseEvent) => {
-        // 滑鼠中鍵 (1)
-        if (e.button === 1) {
+        // 滑鼠中鍵 (1)，或 Alt+左鍵/右鍵 (觸控板適用)：拖動畫布
+        // 以 mousedown 當下判定手勢並記錄，因為放開時 Alt 可能已先鬆開，
+        // click/contextmenu 不能依賴 e.altKey
+        const isPanGesture = e.button === 1 || (e.altKey && (e.button === 0 || e.button === 2));
+        useGameStore.setState({ didPan: isPanGesture });
+        if (isPanGesture) {
             e.preventDefault();
             setIsPanning(true);
             lastMousePos.current = { x: e.clientX, y: e.clientY };
@@ -192,8 +196,9 @@ export const Grid = () => {
     };
 
     const handleClick = (e: React.MouseEvent) => {
-        if (isPanning) return; // 如果正在平移則阻止點擊 (雖然 mouseUp 會清除它，但在邏輯上可能需要嚴謹一些)
-        // 檢查是否實際拖曳過？目前做簡單檢查。
+        // 拖動畫布手勢結束時觸發的 click 不執行任何操作
+        // (不能檢查 isPanning：mouseUp 已先將其清除，click 時恆為 false)
+        if (useGameStore.getState().didPan) return;
 
         const pos = getGridPos(e);
 
@@ -216,6 +221,9 @@ export const Grid = () => {
 
     const handleContextMenu = (e: React.MouseEvent) => {
         e.preventDefault();
+        // Alt+右鍵拖動畫布時不取消操作 (Windows 的 contextmenu 在 mouseup 才觸發，
+        // 屆時 Alt 可能已鬆開，故檢查 didPan 而非 e.altKey)
+        if (useGameStore.getState().didPan) return;
         useGameStore.getState().cancelOperation();
     };
 
